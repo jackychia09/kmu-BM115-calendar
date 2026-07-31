@@ -1,234 +1,171 @@
 document.addEventListener(
-    'DOMContentLoaded',
-    async function () {
+'DOMContentLoaded',
+async function(){
 
 
-        const calendarEl =
-            document.getElementById('calendar');
-
-
-        // 取得 Google Calendar 行程
-        const apiURL =
-        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_API_KEY}&singleEvents=true&orderBy=startTime`;
-
-
-        const response =
-            await fetch(apiURL);
-
-
-        const data =
-            await response.json();
+const calendarEl =
+document.getElementById('calendar');
 
 
 
-        // 如果 API 錯誤
-        if (!data.items) {
-
-            console.log("Google Calendar API 錯誤：", data);
-
-            calendarEl.innerHTML =
-            "❌ 無法取得課程資料";
-
-            return;
-        }
+const apiURL =
+`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_API_KEY}&singleEvents=true&orderBy=startTime`;
 
 
 
-        // 取得目前日曆資訊與顏色
+const response =
+await fetch(apiURL);
 
-const calendarListResponse =
+
+const data =
+await response.json();
+
+
+
+if(!data.items){
+
+console.log(data);
+
+return;
+
+}
+
+
+
+// Google 官方事件顏色
+
+const colorsResponse =
 await fetch(
 
-`https://www.googleapis.com/calendar/v3/users/me/calendarList?key=${GOOGLE_API_KEY}`
+`https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
 
 );
 
 
-const calendarListData =
-await calendarListResponse.json();
+const colorsData =
+await colorsResponse.json();
+
+
+const eventColors =
+colorsData.event;
 
 
 
-const currentCalendar =
-calendarListData.items.find(
 
-calendar =>
+const events =
+data.items.map(event=>{
 
-calendar.id === CALENDAR_ID
 
+console.log(
+event.summary,
+"colorId:",
+event.colorId
 );
 
 
 
-const calendarColor =
-currentCalendar?.backgroundColor || "#3788d8";
+return {
+
+
+title:
+event.summary || "未命名課程",
 
 
 
-        // 將 Google 行程轉換成 FullCalendar 格式
-        const events =
-            data.items.map(event => {
-
-
-                console.log(
-                    event.summary,
-                    "colorId:",
-                    event.colorId
-                );
-
-
-                return {
-
-
-                    title:
-                    event.summary || "未命名課程",
+start:
+event.start.dateTime ||
+event.start.date,
 
 
 
-                    start:
-                    event.start.dateTime ||
-                    event.start.date,
+backgroundColor:
 
+event.colorId && eventColors[event.colorId]
 
+?
 
-                    // 使用 Google 真實顏色
-                 backgroundColor:
-calendarColor,
+eventColors[event.colorId].backgroundColor
+
+:
+
+"#3788d8",
+
 
 
 borderColor:
-calendarColor,
 
+event.colorId && eventColors[event.colorId]
 
+?
 
+eventColors[event.colorId].backgroundColor
 
-                    borderColor:
+:
 
-                    event.colorId &&
-                    eventColors[event.colorId]
+"#3788d8",
 
-                    ?
 
-                    eventColors[event.colorId].backgroundColor
 
-                    :
+textColor:"#ffffff",
 
-                    "#3788d8",
 
 
+extendedProps:{
 
 
-                    textColor:
-                    "#ffffff",
+location:
+event.location || "",
 
 
+description:
+event.description || ""
 
+}
 
-                    extendedProps:{
 
 
-                        description:
-                        event.description || "",
+};
 
 
 
-                        location:
-                        event.location || ""
+});
 
-                    }
 
 
-                };
 
 
-            });
+const calendar =
+new FullCalendar.Calendar(
 
+calendarEl,
 
+{
 
 
+initialView:
+'dayGridMonth',
 
-        // 建立 FullCalendar
 
-        const calendar =
-            new FullCalendar.Calendar(
+locale:
+'zh-tw',
 
-                calendarEl,
 
-                {
+height:'auto',
 
 
-                    initialView:
-                    'dayGridMonth',
+events:events
 
 
 
-                    locale:
-                    'zh-tw',
+}
 
 
-
-                    height:
-                    'auto',
-
-
-
-                    events:
-                    events,
-
-
-
-                    eventClick:function(info){
-
-
-                        alert(
-
-                            "📚 "
-                            +
-                            info.event.title
-
-                            +
-
-                            "\n\n📍 地點："
-
-                            +
-
-                            (
-                                info.event.extendedProps.location
-                                ||
-                                "無"
-                            )
-
-                            +
-
-                            "\n\n📝 說明："
-
-                            +
-
-                            (
-                                info.event.extendedProps.description
-                                ||
-                                "無"
-                            )
-
-
-                        );
-
-
-                    }
-
-
-
-                }
-
-
-            );
-
-
-
-        calendar.render();
-
-
-
-    }
 
 );
+
+
+
+calendar.render();
+
+
+});
