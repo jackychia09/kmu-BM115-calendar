@@ -1,171 +1,225 @@
 document.addEventListener(
-'DOMContentLoaded',
-async function(){
+    'DOMContentLoaded',
+    async function () {
 
 
-const calendarEl =
-document.getElementById('calendar');
+        const calendarEl =
+            document.getElementById('calendar');
+
+
+        // 取得 Google Calendar 行程
+        const apiURL =
+        `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_API_KEY}&singleEvents=true&orderBy=startTime`;
+
+
+        const response =
+            await fetch(apiURL);
+
+
+        const data =
+            await response.json();
 
 
 
-const apiURL =
-`https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events?key=${GOOGLE_API_KEY}&singleEvents=true&orderBy=startTime`;
+        // 如果 API 錯誤
+        if (!data.items) {
+
+            console.log("Google Calendar API 錯誤：", data);
+
+            calendarEl.innerHTML =
+            "❌ 無法取得課程資料";
+
+            return;
+        }
 
 
 
-const response =
-await fetch(apiURL);
+        // 取得 Google 官方顏色表
+        const colorsResponse =
+            await fetch(
+            `https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
+            );
 
 
-const data =
-await response.json();
+        const colorsData =
+            await colorsResponse.json();
+
+
+        const eventColors =
+            colorsData.event;
 
 
 
-const colorsResponse =
-await fetch(
-`https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
+        // 將 Google 行程轉換成 FullCalendar 格式
+        const events =
+            data.items.map(event => {
+
+
+                console.log(
+                    event.summary,
+                    "colorId:",
+                    event.colorId
+                );
+
+
+                return {
+
+
+                    title:
+                    event.summary || "未命名課程",
+
+
+
+                    start:
+                    event.start.dateTime ||
+                    event.start.date,
+
+
+
+                    // 使用 Google 真實顏色
+                    backgroundColor:
+
+                    event.colorId &&
+                    eventColors[event.colorId]
+
+                    ?
+
+                    eventColors[event.colorId].backgroundColor
+
+                    :
+
+                    "#3788d8",
+
+
+
+
+                    borderColor:
+
+                    event.colorId &&
+                    eventColors[event.colorId]
+
+                    ?
+
+                    eventColors[event.colorId].backgroundColor
+
+                    :
+
+                    "#3788d8",
+
+
+
+
+                    textColor:
+                    "#ffffff",
+
+
+
+
+                    extendedProps:{
+
+
+                        description:
+                        event.description || "",
+
+
+
+                        location:
+                        event.location || ""
+
+                    }
+
+
+                };
+
+
+            });
+
+
+
+
+
+        // 建立 FullCalendar
+
+        const calendar =
+            new FullCalendar.Calendar(
+
+                calendarEl,
+
+                {
+
+
+                    initialView:
+                    'dayGridMonth',
+
+
+
+                    locale:
+                    'zh-tw',
+
+
+
+                    height:
+                    'auto',
+
+
+
+                    events:
+                    events,
+
+
+
+                    eventClick:function(info){
+
+
+                        alert(
+
+                            "📚 "
+                            +
+                            info.event.title
+
+                            +
+
+                            "\n\n📍 地點："
+
+                            +
+
+                            (
+                                info.event.extendedProps.location
+                                ||
+                                "無"
+                            )
+
+                            +
+
+                            "\n\n📝 說明："
+
+                            +
+
+                            (
+                                info.event.extendedProps.description
+                                ||
+                                "無"
+                            )
+
+
+                        );
+
+
+                    }
+
+
+
+                }
+
+
+            );
+
+
+
+        calendar.render();
+
+
+
+    }
+
 );
-
-
-const colorsData =
-await colorsResponse.json();
-
-
-const eventColors =
-colorsData.event;
-
-
-return {
-
-
-title:
-event.summary || "未命名課程",
-
-
-start:
-event.start.dateTime ||
-event.start.date,
-
-
-
-backgroundColor:
-eventColors[event.colorId]?.backgroundColor || "#3788d8",
-
-
-borderColor:
-eventColors[event.colorId]?.backgroundColor || "#3788d8",
-
-
-borderColor:
-getColor(event.colorId),
-
-
-textColor:"#ffffff",
-
-
-
-extendedProps:{
-
-
-description:
-event.description || "",
-
-
-location:
-event.location || ""
-
-
-}
-
-
-
-}
-
-
-});
-
-
-
-const calendar =
-new FullCalendar.Calendar(
-calendarEl,
-{
-
-
-initialView:
-'dayGridMonth',
-
-
-locale:
-'zh-tw',
-
-
-height:
-'auto',
-
-
-events:events,
-
-
-
-eventClick:function(info){
-
-
-alert(
-
-info.event.title
-+
-"\n\n"
-+
-"地點："
-+
-(info.event.extendedProps.location || "無")
-+
-"\n\n"
-+
-(info.event.extendedProps.description || "")
-
-);
-
-
-}
-
-
-});
-
-
-
-calendar.render();
-
-
-});
-
-
-
-
-
-function getColor(colorId){
-
-
-const colors={
-
-"1":"#7986cb",
-"2":"#33b679",
-"3":"#8e24aa",
-"4":"#e67c73",
-"5":"#f6bf26",
-"6":"#f4511e",
-"7":"#039be5",
-"8":"#616161",
-"9":"#3f51b5",
-"10":"#0b8043",
-"11":"#d60000"
-
-};
-
-
-return colors[colorId] || "#3788d8";
-
-
-}
