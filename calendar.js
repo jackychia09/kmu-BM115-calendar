@@ -34,19 +34,34 @@ document.addEventListener(
 
 
 
-        // 取得 Google 官方顏色表
-        const colorsResponse =
-            await fetch(
-            `https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
-            );
+        // 取得目前日曆資訊與顏色
+
+const calendarListResponse =
+await fetch(
+
+`https://www.googleapis.com/calendar/v3/users/me/calendarList?key=${GOOGLE_API_KEY}`
+
+);
 
 
-        const colorsData =
-            await colorsResponse.json();
+const calendarListData =
+await calendarListResponse.json();
 
 
-        const eventColors =
-            colorsData.event;
+
+const currentCalendar =
+calendarListData.items.find(
+
+calendar =>
+
+calendar.id === CALENDAR_ID
+
+);
+
+
+
+const calendarColor =
+currentCalendar?.backgroundColor || "#3788d8";
 
 
 
@@ -77,18 +92,12 @@ document.addEventListener(
 
 
                     // 使用 Google 真實顏色
-                    backgroundColor:
+                 backgroundColor:
+calendarColor,
 
-                    event.colorId &&
-                    eventColors[event.colorId]
 
-                    ?
-
-                    eventColors[event.colorId].backgroundColor
-
-                    :
-
-                    "#3788d8",
+borderColor:
+calendarColor,
 
 
 
