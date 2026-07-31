@@ -5,9 +5,12 @@
 
 <meta charset="UTF-8">
 
-<title>
-高醫後醫 BM115 班級入口
-</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>高醫後醫 BM115 班級入口</title>
+
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
 
 
 <style>
@@ -15,29 +18,40 @@
 body{
 
 font-family:
-Arial,
 "Noto Sans TC",
 sans-serif;
 
-padding:30px;
-
 background:#f5f7fb;
+
+margin:0;
 
 }
 
 
-.event{
+.header{
+
+background:#0066cc;
+
+color:white;
+
+padding:30px;
+
+text-align:center;
+
+}
+
+
+#calendar{
+
+max-width:1200px;
+
+margin:30px auto;
 
 background:white;
 
-margin:10px 0;
+padding:20px;
 
-padding:15px;
-
-border-radius:10px;
-
-box-shadow:
-0 3px 10px #ddd;
+border-radius:15px;
 
 }
 
@@ -51,27 +65,25 @@ box-shadow:
 <body>
 
 
+<div class="header">
+
 <h1>
 🩺 高醫後醫 BM115 班級入口
 </h1>
 
-
-<h2>
-📅 課程列表
-</h2>
-
-
-<div id="calendar">
-
-載入中...
-
 </div>
 
+
+<div id="calendar"></div>
 
 
 <script src="config.js"></script>
 
-<script src="script.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+
+<script src="calendar.js"></script>
 
 
 </body>
