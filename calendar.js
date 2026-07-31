@@ -1,3 +1,92 @@
+const subjectColors = {
+
+    // 特殊事件
+    "測試": "#d81b60",
+    "新生座談": "#d81b60",
+    "註冊": "#d81b60",
+    "健檢": "#d81b60",
+    "開學": "#d81b60",
+    "放假": "#d81b60",
+    "考試": "#d81b60",
+
+
+    // 醫學專業素養
+    "醫學專業素養": "#424242",
+
+
+    // 大體解剖學
+    "大體解剖學": "#f57c00",
+
+
+    // 大體解剖學實驗
+    "大體解剖學實驗": "#e53935",
+
+
+    // 生物化學
+    "生物化學": "#fbc02d",
+
+
+    // 組織學
+    "組織學": "#0097a7",
+
+
+    // 組織學實驗
+    "組織學實驗": "#5e35b1",
+
+
+    // 胚胎學
+    "胚胎學": "#388e3c",
+
+
+    // 生理學
+    "生理學": "#9e9e9e",
+
+
+    // 藥理學
+    "藥理學": "#9575cd",
+
+
+    // 微生物暨免疫學
+    "微生物暨免疫學": "#7cb342",
+
+
+    // 病理學
+    "病理學": "#6a1b9a",
+
+
+    // 病理學實驗
+    "病理學實驗": "#8e24aa",
+
+
+    // Laboratory Diagnostics
+    "Laboratory Diagnostics": "#6d4c41"
+
+
+};
+function getSubjectColor(title){
+
+
+    for(
+        const subject in subjectColors
+    ){
+
+
+        if(
+            title.includes(subject)
+        ){
+
+            return subjectColors[subject];
+
+        }
+
+    }
+
+
+    // 找不到科目時預設藍色
+    return "#3788d8";
+
+
+}
 document.addEventListener(
 'DOMContentLoaded',
 async function(){
@@ -61,19 +150,10 @@ event.colorId
 
 
 
-let color =
-"#3788d8";
-
-
-if(
-event.colorId &&
-eventColors[event.colorId]
-){
-
-color =
-eventColors[event.colorId].backgroundColor;
-
-}
+const color =
+getSubjectColor(
+    event.summary || ""
+);
 
 
 
