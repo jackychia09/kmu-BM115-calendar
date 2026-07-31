@@ -24,7 +24,10 @@ await response.json();
 
 if(!data.items){
 
-console.log(data);
+console.log("API錯誤", data);
+
+calendarEl.innerHTML =
+"❌ 無法取得課程資料";
 
 return;
 
@@ -32,13 +35,9 @@ return;
 
 
 
-// Google 官方事件顏色
-
 const colorsResponse =
 await fetch(
-
 `https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
-
 );
 
 
@@ -51,7 +50,6 @@ colorsData.event;
 
 
 
-
 const events =
 data.items.map(event=>{
 
@@ -61,6 +59,23 @@ event.summary,
 "colorId:",
 event.colorId
 );
+
+
+
+let eventColor =
+"#3788d8";
+
+
+
+if(
+event.colorId &&
+eventColors[event.colorId]
+){
+
+eventColor =
+eventColors[event.colorId].backgroundColor;
+
+}
 
 
 
@@ -79,34 +94,15 @@ event.start.date,
 
 
 backgroundColor:
-
-event.colorId && eventColors[event.colorId]
-
-?
-
-eventColors[event.colorId].backgroundColor
-
-:
-
-"#3788d8",
-
+eventColor,
 
 
 borderColor:
-
-event.colorId && eventColors[event.colorId]
-
-?
-
-eventColors[event.colorId].backgroundColor
-
-:
-
-"#3788d8",
+eventColor,
 
 
-
-textColor:"#ffffff",
+textColor:
+"#ffffff",
 
 
 
@@ -121,7 +117,6 @@ description:
 event.description || ""
 
 }
-
 
 
 };
@@ -150,10 +145,53 @@ locale:
 'zh-tw',
 
 
-height:'auto',
+height:
+'auto',
 
 
-events:events
+events:
+events,
+
+
+
+eventClick:function(info){
+
+
+alert(
+
+"📚 "
++
+info.event.title
+
++
+
+"\n\n📍 地點："
+
++
+
+(
+info.event.extendedProps.location
+||
+"無"
+)
+
++
+
+"\n\n📝 說明："
+
++
+
+(
+info.event.extendedProps.description
+||
+"無"
+)
+
+
+);
+
+
+}
 
 
 
@@ -166,6 +204,7 @@ events:events
 
 
 calendar.render();
+
 
 
 });
