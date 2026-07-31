@@ -7,7 +7,6 @@ const calendarEl =
 document.getElementById('calendar');
 
 
-
 const apiURL =
 `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?key=${GOOGLE_API_KEY}&singleEvents=true&orderBy=startTime`;
 
@@ -24,7 +23,7 @@ await response.json();
 
 if(!data.items){
 
-console.log("API錯誤", data);
+console.log("API錯誤：", data);
 
 calendarEl.innerHTML =
 "❌ 無法取得課程資料";
@@ -62,9 +61,8 @@ event.colorId
 
 
 
-let eventColor =
+let color =
 "#3788d8";
-
 
 
 if(
@@ -72,7 +70,7 @@ event.colorId &&
 eventColors[event.colorId]
 ){
 
-eventColor =
+color =
 eventColors[event.colorId].backgroundColor;
 
 }
@@ -86,24 +84,21 @@ title:
 event.summary || "未命名課程",
 
 
-
 start:
 event.start.dateTime ||
 event.start.date,
 
 
-
 backgroundColor:
-eventColor,
+color,
 
 
 borderColor:
-eventColor,
+color,
 
 
 textColor:
 "#ffffff",
-
 
 
 extendedProps:{
@@ -116,6 +111,7 @@ event.location || "",
 description:
 event.description || ""
 
+
 }
 
 
@@ -127,8 +123,6 @@ event.description || ""
 
 
 
-
-
 const calendar =
 new FullCalendar.Calendar(
 
@@ -136,22 +130,17 @@ calendarEl,
 
 {
 
-
 initialView:
 'dayGridMonth',
-
 
 locale:
 'zh-tw',
 
-
 height:
 'auto',
 
-
 events:
 events,
-
 
 
 eventClick:function(info){
@@ -168,7 +157,6 @@ info.event.title
 "\n\n📍 地點："
 
 +
-
 (
 info.event.extendedProps.location
 ||
@@ -180,7 +168,6 @@ info.event.extendedProps.location
 "\n\n📝 說明："
 
 +
-
 (
 info.event.extendedProps.description
 ||
@@ -194,9 +181,7 @@ info.event.extendedProps.description
 }
 
 
-
 }
-
 
 
 );
@@ -204,7 +189,6 @@ info.event.extendedProps.description
 
 
 calendar.render();
-
 
 
 });
