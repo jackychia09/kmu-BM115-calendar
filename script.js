@@ -9,8 +9,26 @@ async function loadCalendar(){
     const data = await response.json();
 
 
+    console.log(data);
+
+
     const calendar =
         document.getElementById("calendar");
+
+
+    if (!data.items) {
+
+        calendar.innerHTML =
+        "❌ 無法取得 Google Calendar 資料";
+
+        console.log(
+            "API錯誤：",
+            data
+        );
+
+        return;
+    }
+
 
 
     data.items.forEach(event=>{
@@ -18,10 +36,6 @@ async function loadCalendar(){
 
         const title =
             event.summary || "未命名課程";
-
-
-        const color =
-            event.colorId || "default";
 
 
         const start =
@@ -37,7 +51,7 @@ async function loadCalendar(){
         item.className="event";
 
 
-        item.innerHTML=
+        item.innerHTML =
         `
         <div>
         📚 ${title}
@@ -46,7 +60,6 @@ async function loadCalendar(){
         <small>
         ${start}
         </small>
-
         `;
 
 
