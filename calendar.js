@@ -22,8 +22,18 @@ await response.json();
 
 
 
-const events =
-data.items.map(event=>{
+const colorsResponse =
+await fetch(
+`https://www.googleapis.com/calendar/v3/colors?key=${GOOGLE_API_KEY}`
+);
+
+
+const colorsData =
+await colorsResponse.json();
+
+
+const eventColors =
+colorsData.event;
 
 
 return {
@@ -40,7 +50,11 @@ event.start.date,
 
 
 backgroundColor:
-getColor(event.colorId),
+eventColors[event.colorId]?.backgroundColor || "#3788d8",
+
+
+borderColor:
+eventColors[event.colorId]?.backgroundColor || "#3788d8",
 
 
 borderColor:
